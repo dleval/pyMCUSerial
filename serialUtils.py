@@ -5,21 +5,20 @@
 __author__ = "David Leval"
 __copyright__ = "Copyright 2020, DLE-Dev"
 __license__ = "GPL"
-__version__ = "1.0"
+__version__ = "1.1"
 __email__ = "dleval@dle-dev.com"
 
 import sys
 import glob
 import serial
 
-
 def list_serial_ports():
-    """ Lists serial port names
-
-        :raises EnvironmentError:
-            On unsupported or unknown platforms
-        :returns:
-            A list of the serial ports available on the system
+    """ 
+    Lists serial port names
+    :raises EnvironmentError:
+        On unsupported or unknown platforms
+    :returns:
+        A list of the serial ports available on the system
     """
     if sys.platform.startswith('win'):
         ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -43,12 +42,12 @@ def list_serial_ports():
 
 
 def listUSBSerialPorts():
-    """ Lists  USB serial port available on the system
-
-        :raises EnvironmentError:
-            On unsupported or unknown platforms
-        :returns:
-            USB serial ports list with VID, PID, Serial ...
+    """ 
+    Lists  USB serial port available on the system
+    :raises EnvironmentError:
+        On unsupported or unknown platforms
+    :returns:
+        USB serial ports list with VID, PID, Serial ...
     """
     if sys.platform.startswith('win'):
         import serial.tools.list_ports
@@ -69,15 +68,15 @@ def listUSBSerialPorts():
     return result
 
 
-def connectUSBSerialFind(*args):
-    """ Search for USB serial device with information (PID, VID, Serial, Description ...)
-
-                :raises SystemError:
-                    (No USB serial device detected) or
-                    (No USB serial device with all args detected)
-                :returns:
-                    Port corresponding to the serial USB device
-            """
+def USBSerialFind(*args):
+    """ 
+    Search for USB serial device with information (PID, VID, Serial, Description ...)
+    :raises SystemError:
+        (No USB serial device detected) or
+        (No USB serial device with all args detected)
+    :returns:
+         Port corresponding to the serial USB device
+    """
     port_ret = []
     serialPortsAvailable = listUSBSerialPorts()
     if bool(serialPortsAvailable):
@@ -91,3 +90,10 @@ def connectUSBSerialFind(*args):
         return port_ret
     else:
         raise SystemError('No USB serial device detected')
+
+
+def connectUSBSerialFind(*args, baudrate):
+    devicePort = USBSerialFind(*args)
+    deviceCom = serial.Serial(devicePort[0], baudrate, timeout=2)
+    print("Open USB serial port :", devicePort[0])
+    return deviceCom
